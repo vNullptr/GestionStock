@@ -1,0 +1,6 @@
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/CMakeFiles/GestionStock.dir
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/src/CMakeFiles/stockLib.dir
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/src/CMakeFiles/edit_cache.dir
+C:/Users/ULTRAPC/CLionProjects/GestionStock/cmake-build-debug/src/CMakeFiles/rebuild_cache.dir
