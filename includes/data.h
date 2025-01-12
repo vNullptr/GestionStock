@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "struct.h"
 
-FILE* initCSV(char* name);
-void saveProductToCSV(Product p); // permet de sauvegarder une structure produit
-void fetchProductFromCSV(Product* dest); // permet de recup une structure produit
+FILE* initCSV(char* name, char* access);
+void saveProductToCSV(Product p, FILE* datacsv); // permet de sauvegarder une structure produit
+void fetchProductFromCSV(Product* dest, FILE* datacsv); // permet de recup une structure produit
 int calcNextID(); // calcule l'id pour le prochain produit

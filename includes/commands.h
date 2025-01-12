@@ -3,6 +3,8 @@
 
 // tableau contenant toute les commandes
 static char commands[][2][250] = {
-        {"add [Product Name] [Unit Price] [Stock Quantity] [Alert Threshold] [Last Entry :d/m/y] [Last Exit :d/m/y] ","add a product."},
-        {"edit","edit a product propreties."}
+        {"add [Nom Produit] [Prix Unitaire] [Quantite Stock] [Seuille d'alerte] [Derneire entree :d/m/y] [Derniere sortie :d/m/y] ","add a product."},
+        {"edit [ID]","Modifie les propriete du produit."},
+        {"rm [ID Produit]", "Supprime le produit de la liste."},
+        {"sr [TYPE:ID/NOM] [ID/NOM]","Chercher un ou plusieurs produit selon leur ID ou leur nom."}
 };
