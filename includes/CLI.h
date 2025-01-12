@@ -16,5 +16,10 @@ void editProductCLI(char* args, char* username); // menu modification produit
 void rmProductClI(char* args); // menu suppression produit
 void showProductCLI(); // affichage des produits
 void searchProductCLI(char* args); // recherche de produit
-void sortProductCLI(); // trie de produits
+void sortProductCLI(char* args); // trie de produits
 void CLI(char* name); // contient tout le menu qui permet de choisir l'action a executer
+
+
+// util
+
+int compareDate(Date d1, Date d2);

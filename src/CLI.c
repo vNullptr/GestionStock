@@ -108,8 +108,11 @@ void searchProductCLI(char* args){
     Product p;
 
     if ( !strcmp(parsedArgs,"ID") ){
+        //affichage haut du tableau
         printf("ID\tProduit\t  Utilisateur\tPrix Unitaire\tStock\tSeuil Alerte\tDate Derniere Entree\t Date Derniere Sortie\n");
+        //separation des arguments
         parsedArgs = strtok(NULL, " ");
+        // on cherche l'id
         while (!feof(datacsv)){
             fetchProductFromCSV(&p, datacsv);
             if (p.ID == atoi(parsedArgs)){
@@ -126,8 +129,11 @@ void searchProductCLI(char* args){
             }
         }
     } else if (!strcmp(parsedArgs,"NOM")){
+        //affichage haut du tableau
         printf("ID\tProduit\t  Utilisateur\tPrix Unitaire\tStock\tSeuil Alerte\tDate Derniere Entree\t Date Derniere Sortie\n");
+        //separation des arguments
         parsedArgs = strtok(NULL, " ");
+        // on cherche le nom
         while (!feof(datacsv)){
             fetchProductFromCSV(&p, datacsv);
             if (!strcmp(parsedArgs, p.nameP)){
@@ -155,7 +161,7 @@ void searchProductCLI(char* args){
 void editProductCLI(char* args, char* username){
 
     FILE* datacsv = initCSV("data.csv","r");
-    int N = calcNextID();
+    int N = calcNextID(); // connaitre le nombre d'element pour cree un tableau de la meme taille
     Product T[N], newP;
     char editArg[MAX_ARG_SIZE];
 
@@ -164,38 +170,157 @@ void editProductCLI(char* args, char* username){
     }
     fclose(datacsv);
 
-    printf("[*] Entrez les nouvelles proprietes du produit.\n>");
-    gets(editArg);
 
-    int result = sscanf(editArg, "%39[^ ] %f %i %f %i/%i/%i %i/%i/%i",
-                        newP.nameP,
-                        &newP.unitPrice,
-                        &newP.qtStock,
-                        &newP.thresholdAlert,
-                        &newP.lastEntry.d,&newP.lastEntry.m,&newP.lastEntry.y,
-                        &newP.lastExit.d,&newP.lastExit.m,&newP.lastExit.y
-    );
+    datacsv = initCSV("data.csv","w");
+    // on cherche le produit avec son ID
+    for (int i =0; i<N; i++){
+        // quand on le trouve on demande a l'utilisateur
+        if (T[i].ID == atoi(args)){
 
-    if (result == 10){
-        datacsv = initCSV("data.csv","w");
-        for (int i =0; i<N; i++){
-            if (T[i].ID == atoi(args)){
+            printf("[*] Entrez les nouvelles proprietes du produit.\n>");
+            gets(editArg);
+
+            // on remplie la struct temporaire
+            int result = sscanf(editArg, "%39[^ ] %f %i %f %i/%i/%i %i/%i/%i",
+                                newP.nameP,
+                                &newP.unitPrice,
+                                &newP.qtStock,
+                                &newP.thresholdAlert,
+                                &newP.lastEntry.d,&newP.lastEntry.m,&newP.lastEntry.y,
+                                &newP.lastExit.d,&newP.lastExit.m,&newP.lastExit.y
+            );
+
+            // on verifie si on a tout les arguemnts
+            if ( result == 10){
                 newP.ID = T[i].ID;
-                strcpy(newP.nameP, username);
+                strcpy(newP.userName, username);
+                // on remplace l'ancienne structure ( produit ) avec la nouvelle
                 T[i] = newP;
+            } else {
+                printf("[!] Arguments manquants ou incorrecte.\n");
+            }
+
+            break;
+        }
+    }
+    for (int i = 0; i < N; i++){
+        // on reecris le fichier data
+        saveProductToCSV(T[i], datacsv);
+    }
+    fclose(datacsv);
+
+    // il existe un meuilleur moyen plus optimise de le faire
+    // en copiant et reecrivant que ce qui va suivre le produit qu'on modifie
+
+}
+
+// negatif = d1 plus tot
+// positif = d2 plus tot
+int compareDate(Date d1, Date d2) {
+    if (d1.y < d2.y) {
+        return -1;
+    } else if (d1.y > d2.y) {
+        return 1;
+    } else {
+        if (d1.m < d2.m) {
+            return -1;
+        } else if (d1.m > d2.m) {
+            return 1;
+        } else {
+            if (d1.d < d2.d) {
+                return -1;
+            } else if (d1.d > d2.d) {
+                return 1;
+            } else {
+                return 0;
             }
         }
-        for (int i = 0; i < N; i++){
-            saveProductToCSV(T[i], datacsv);
+    }
+}
+
+    void sortProductCLI(char* args){
+    FILE* datacsv = initCSV("data.csv","r");
+    int N = calcNextID(); // connaitre le nombre d'element pour cree un tableau de la meme taille
+    Product T[N], temp;
+
+    for (int i = 0; i < N; i++){
+        fetchProductFromCSV(&T[i], datacsv);
+    }
+    fclose(datacsv);
+
+    if (!strcmp(args,"prix")){
+        // trie par prix
+        for (int i = N; i > 0; i--){
+            for (int j = 1; j < i; j++){
+                if ( T[j-1].unitPrice > T[j].unitPrice ){
+                    temp = T[j-1];
+                    T[j-1] = T[j];
+                    T[j] = temp;
+                }
+            }
         }
-        fclose(datacsv);
-    } else {
-        printf("[!] Not enough or wrong format argument !\n");
+    } else if (!strcmp(args,"stock")){
+        // trie par stock
+        for (int i = N; i > 0; i--){
+            for (int j = 1; j < i; j++){
+                if ( T[j-1].qtStock > T[j].qtStock){
+                    temp = T[j-1];
+                    T[j-1] = T[j];
+                    T[j] = temp;
+                }
+            }
+        }
+    } else if (!strcmp(args,"seuil")){
+    // trie par stock
+        for (int i = N; i > 0; i--){
+            for (int j = 1; j < i; j++){
+                if ( T[j-1].thresholdAlert > T[j].thresholdAlert){
+                    temp = T[j-1];
+                    T[j-1] = T[j];
+                    T[j] = temp;
+                }
+            }
+        }
+    } else if (!strcmp(args,"entree")){
+        // trie par seuil
+        for (int i = N; i > 0; i--){
+            for (int j = 1; j < i; j++){
+                if (compareDate(T[j-1].lastEntry, T[j].lastEntry) > 0){
+                    temp = T[j-1];
+                    T[j-1] = T[j];
+                    T[j] = temp;
+                }
+            }
+        }
+    } else if (!strcmp(args,"sortie")){
+        // trie par derniere entree
+        for (int i = N; i > 0; i--){
+            for (int j = 1; j < i; j++){
+                if (compareDate(T[j-1].lastExit, T[j].lastExit) > 0){
+                    temp = T[j-1];
+                    T[j-1] = T[j];
+                    T[j] = temp;
+                }
+            }
+        }
+
     }
 
-    // /!\ probleme pour copier le nouveau nom du produit
-    // solution : copier automatiquement les nouvelle donnees sans passer par une struct temporaire
-    // a faire
+    printf("ID\tProduit\t  Utilisateur\tPrix Unitaire\tStock\tSeuil Alerte\tDate Derniere Entree\t Date Derniere Sortie\n");
+    for (int i = 0; i < N; i++){
+        printf("%i\t%s %s\t\t%.3f\t\t%i\t%.3f\t\t%i/%i/%i\t\t\t %i/%i/%i\n",
+               T[i].ID,
+               T[i].nameP,
+               T[i].userName,
+               T[i].unitPrice,
+               T[i].qtStock,
+               T[i].thresholdAlert,
+               T[i].lastEntry.d, T[i].lastEntry.m, T[i].lastEntry.y,
+               T[i].lastExit.d, T[i].lastExit.m, T[i].lastExit.y
+        );
+    }
+
+
 
 }
 
@@ -228,7 +353,7 @@ void CLI(char* name){
         } else if (!strcmp(lastCommand,"sr")){
             searchProductCLI(args);
         }else if (!strcmp(lastCommand,"sort")){
-            //sortProductCLI();
+            sortProductCLI(args);
         }
     } while(strcmp(lastCommand, "exit")); // on quitte le programme quand l'utilisateur entre "exit"
 
