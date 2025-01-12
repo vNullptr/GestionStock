@@ -1,3 +1,3 @@
-#Projet Gestion de Stock
+# Projet Gestion de Stock
 
-##- 2AP G1 Groupe 6
+## - 2AP G1 Groupe 6
